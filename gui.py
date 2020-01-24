@@ -15,6 +15,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Finn urler -  OBOS")
         self.left = 500
         self.top = 500
+        self.setWindowIcon(QIcon('icon2.png'))  
 
         def add_data(table):
             table.setColumnCount(1)
@@ -35,8 +36,10 @@ class MainWindow(QMainWindow):
             for i in range(table.rowCount()):
                 data+=f"\n{table.item(i,0).text()}"
             filename=QFileDialog.getSaveFileName(caption="Lagre fil", directory=f"{fragment.text()}".lower(), filter="Csv (*.csv)")
-            with open(filename[0],"w") as f:
-                f.write(data)
+            
+            if filename[0]:
+                with open(filename[0],"w") as f:
+                    f.write(data)
 
         layout1 = QHBoxLayout()
 
@@ -58,8 +61,10 @@ class MainWindow(QMainWindow):
         
         fragment_label = QLabel("Urlfragment:")
         fragment = QLineEdit("")
+        fragment.returnPressed.connect(lambda :add_data(my_table))
         fragment_width = fragment_label.fontMetrics().boundingRect(fragment_label.text()).width()
         fragment.setMaximumSize(200-fragment_width,20)
+
         my_table = QTableWidget()
         fragment_label.setMaximumSize(fragment_width+5,20)
         layout4.addWidget(fragment_label)
@@ -73,6 +78,8 @@ class MainWindow(QMainWindow):
         lagre.clicked.connect(lambda:lagre_data(my_table))
         antall = QLabel("")
 
+        shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
+        shortcut.activated.connect(lambda :lagre_data(my_table))
 
         layout2.addLayout(layout4)
         layout2.addWidget(hent)
@@ -95,7 +102,8 @@ app = QApplication(sys.argv)
 
 window = MainWindow()
 window.resize(1000,500)
-window.show() # IMPORTANT!!!!! Windows are hidden by default.
+window.show() 
+
 
 # Start the event loop.
 app.exec_()

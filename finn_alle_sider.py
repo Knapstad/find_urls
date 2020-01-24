@@ -22,7 +22,7 @@ def find_urlfragment(tag: str, sitemap: BS) -> list:
     if tag == "":
         urls = [url.text for url in locs]
     else:
-        urls = [url.text for url in locs if tag in url.text]
+        urls = [url.text for url in locs if tag.lower() in url.text.lower()]
     return urls
 
 

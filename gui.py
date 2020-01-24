@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         def add_data(table):
             table.setColumnCount(1)
             table.setHorizontalHeaderLabels(["Urler"])
-            urls = find_urlfragment(fragment.text(), get_sitemap())
+            urls = find_urlfragment(fragment.text().lower(), get_sitemap())
             maks=0
             for url in urls:
                 if len(url) > maks:

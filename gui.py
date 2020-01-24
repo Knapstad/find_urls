@@ -41,12 +41,11 @@ class MainWindow(QMainWindow):
                 with open(filename[0],"w") as f:
                     f.write(data)
 
+        
         layout1 = QHBoxLayout()
-
         layout2 = QVBoxLayout()
         layout3 = QVBoxLayout()
         layout4 = QHBoxLayout()
-
 
         layout1.setContentsMargins(0,0,0,0)
         layout2.setContentsMargins(30,30,40,0)
@@ -57,7 +56,6 @@ class MainWindow(QMainWindow):
         layout4.setSpacing(2)
 
         layout2.setAlignment(Qt.AlignVCenter)
-
         
         fragment_label = QLabel("Urlfragment:")
         fragment = QLineEdit("")
@@ -86,7 +84,6 @@ class MainWindow(QMainWindow):
         layout2.addWidget(lagre)
         layout2.addWidget(antall)
         layout1.addLayout(layout2)
-        
 
         layout3.addWidget(my_table)
         
@@ -95,10 +92,8 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout1)
         self.setCentralWidget(widget)
-        
-        
 
-app = QApplication(sys.argv)
+app = QApplication(list(""))
 
 window = MainWindow()
 window.resize(1000,500)

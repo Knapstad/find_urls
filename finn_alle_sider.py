@@ -19,7 +19,10 @@ def get_sitemap() -> BS:
 
 def find_urlfragment(tag: str, sitemap: BS) -> list:
     locs = sitemap.findAll("loc")
-    urls = [url.text for url in locs if tag in url.text]
+    if tag == "":
+        urls = [url.text for url in locs]
+    else:
+        urls = [url.text for url in locs if tag in url.text]
     return urls
 
 

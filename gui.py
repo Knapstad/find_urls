@@ -1,11 +1,20 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from finn_alle_sider import  find_urlfragment, get_sitemap
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QKeySequence
+from finn_alle_sider import find_urlfragment, get_sitemap
 # Only needed for access to command line arguments
+import os
 import sys
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
 
+    return os.path.join(base_path, relative_path)
 
 class MainWindow(QMainWindow):
 
@@ -15,7 +24,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Finn urler -  OBOS")
         self.left = 500
         self.top = 500
-        self.setWindowIcon(QIcon('icon2.png'))  
+        self.setWindowIcon(QIcon(resource_path('icon2.png')))  
 
         def add_data(table):
             table.setColumnCount(1)

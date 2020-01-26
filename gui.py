@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
 from finn_alle_sider import find_urlfragment, get_sitemap
+from bs4 import BeautifulSoup as BS
 # Only needed for access to command line arguments
 import os
 import sys
@@ -35,7 +36,9 @@ class MainWindow(QMainWindow):
                 sitemap = get_sitemap()
             urls = find_urlfragment(fragment.text(), sitemap)
             for url in urls:
-                
+                request = requests.get(url)
+                title = BS(request.text).title.text
+                                
                 currentRowCount = table.rowCount()
                 table.setRowCount(currentRowCount+1)
                 table.setItem(currentRowCount, 0, QTableWidgetItem(f"{url}"))

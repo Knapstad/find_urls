@@ -25,6 +25,20 @@ def find_urlfragment(tag: str, sitemap: BS) -> list:
         urls = [url.text for url in locs if tag.lower() in url.text.lower()]
     return urls
 
+def get_titles(urls: list):
+    titles = []
+    for url in urls:
+        response = requests.get(url)
+        soup= BS(response.text)
+        titles.append(soup.title.text)
+    return titles
+
+def get_title(soup: BS):
+    try:
+        return soup.title.text
+    except Exception:
+        return "No title found" 
+
 
 if __name__ == "__main__":
     if not sys.argv[1]:

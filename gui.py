@@ -1,9 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
-from finn_alle_sider import find_urlfragment, get_sitemap, get_title
+from finn_alle_sider import find_urlfragment, get_sitemap
 from bs4 import BeautifulSoup as BS
-# Only needed for access to command line arguments
 import os
 import sys
 import requests
@@ -19,15 +18,14 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 class MainWindow(QMainWindow):
-
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        
+
         self.setWindowTitle("Finn urler -  OBOS")
         self.left = 500
         self.top = 500
-        self.setWindowIcon(QIcon(resource_path('icon2.png')))  
-        
+        self.setWindowIcon(QIcon(resource_path("icon2.png")))
+
         self.sitemap = None
 
         def add_data(table):
@@ -39,58 +37,63 @@ class MainWindow(QMainWindow):
             urls = find_urlfragment(fragment.text(), self.sitemap)
             for url in urls:
                 currentRowCount = table.rowCount()
-                table.setRowCount(currentRowCount+1)
+                table.setRowCount(currentRowCount + 1)
                 table.setItem(currentRowCount, 0, QTableWidgetItem(f"{url}"))
-            table.setColumnWidth(0,700)
+            table.setColumnWidth(0, 700)
             antall.setText(f"Antall urler: {len(urls)}")
 
         def lagre_data(table):
-            data="urls"
+            data = "urls"
             for i in range(table.rowCount()):
-                data+=f"\n{table.item(i,0).text()}"
-            filename=QFileDialog.getSaveFileName(caption="Lagre fil", directory=f"{fragment.text()}".lower(), filter="Csv (*.csv)")
-            
+                data += f"\n{table.item(i,0).text()}"
+            filename = QFileDialog.getSaveFileName(
+                caption="Lagre fil",
+                directory=f"{fragment.text()}".lower(),
+                filter="Csv (*.csv)",
+            )
+
             if filename[0]:
-                with open(filename[0],"w") as f:
+                with open(filename[0], "w") as f:
                     f.write(data)
 
-        
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
         layout3 = QVBoxLayout()
         layout4 = QHBoxLayout()
 
-        layout1.setContentsMargins(0,0,0,0)
-        layout2.setContentsMargins(30,30,40,0)
-        layout4.setContentsMargins(0,0,0,0)
+        layout1.setContentsMargins(0, 0, 0, 0)
+        layout2.setContentsMargins(30, 30, 40, 0)
+        layout4.setContentsMargins(0, 0, 0, 0)
 
         layout1.setSpacing(20)
         layout2.setSpacing(10)
         layout4.setSpacing(2)
 
         layout2.setAlignment(Qt.AlignVCenter)
-        
+
         fragment_label = QLabel("Urlfragment:")
         fragment = QLineEdit("")
-        fragment.returnPressed.connect(lambda :add_data(my_table))
-        fragment_width = fragment_label.fontMetrics().boundingRect(fragment_label.text()).width()
-        fragment.setMaximumSize(200-fragment_width,20)
+        fragment.returnPressed.connect(lambda: add_data(my_table))
+        fragment_width = (
+            fragment_label.fontMetrics().boundingRect(fragment_label.text()).width()
+        )
+        fragment.setMaximumSize(200 - fragment_width, 20)
 
         my_table = QTableWidget()
-        fragment_label.setMaximumSize(fragment_width+5,20)
+        fragment_label.setMaximumSize(fragment_width + 5, 20)
         layout4.addWidget(fragment_label)
         layout4.addWidget(fragment)
-        
+
         hent = QPushButton("Hent urler")
-        hent.setMaximumSize(200,30)
+        hent.setMaximumSize(200, 30)
         lagre = QPushButton("Lagre urler")
-        lagre.setMaximumSize(200,30)
-        hent.clicked.connect(lambda:add_data(my_table))
-        lagre.clicked.connect(lambda:lagre_data(my_table))
+        lagre.setMaximumSize(200, 30)
+        hent.clicked.connect(lambda: add_data(my_table))
+        lagre.clicked.connect(lambda: lagre_data(my_table))
         antall = QLabel("")
 
         shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
-        shortcut.activated.connect(lambda :lagre_data(my_table))
+        shortcut.activated.connect(lambda: lagre_data(my_table))
 
         layout2.addLayout(layout4)
         layout2.addWidget(hent)
@@ -99,18 +102,19 @@ class MainWindow(QMainWindow):
         layout1.addLayout(layout2)
 
         layout3.addWidget(my_table)
-        
-        layout1.addLayout( layout3 )
-        
+
+        layout1.addLayout(layout3)
+
         widget = QWidget()
         widget.setLayout(layout1)
         self.setCentralWidget(widget)
 
+
 app = QApplication(list(""))
 
 window = MainWindow()
-window.resize(1000,500)
-window.show() 
+window.resize(1000, 500)
+window.show()
 
 
 # Start the event loop.

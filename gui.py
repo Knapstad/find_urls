@@ -2,10 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
 from finn_alle_sider import find_urlfragment, get_sitemap
-from bs4 import BeautifulSoup as BS
 import os
 import sys
-import requests
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """

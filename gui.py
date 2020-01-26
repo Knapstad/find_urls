@@ -1,12 +1,13 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
-from finn_alle_sider import find_urlfragment, get_sitemap
+from finn_alle_sider import find_urlfragment, get_sitemap, get_title
 from bs4 import BeautifulSoup as BS
 # Only needed for access to command line arguments
 import os
 import sys
 import requests
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -27,18 +28,16 @@ class MainWindow(QMainWindow):
         self.top = 500
         self.setWindowIcon(QIcon(resource_path('icon2.png')))  
         
-        sitemap = None
+        self.sitemap = None
 
         def add_data(table):
             table.setColumnCount(1)
-            table.setHorizontalHeaderLabels(["Urler"])
-            if sitemap is None:
-                sitemap = get_sitemap()
-            urls = find_urlfragment(fragment.text(), sitemap)
+            table.setRowCount(0)
+            table.setHorizontalHeaderLabels(["Url", "Tittel"])
+            if self.sitemap is None:
+                self.sitemap = get_sitemap()
+            urls = find_urlfragment(fragment.text(), self.sitemap)
             for url in urls:
-                request = requests.get(url)
-                title = BS(request.text).title.text
-                                
                 currentRowCount = table.rowCount()
                 table.setRowCount(currentRowCount+1)
                 table.setItem(currentRowCount, 0, QTableWidgetItem(f"{url}"))

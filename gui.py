@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup as BS
 # Only needed for access to command line arguments
 import os
 import sys
-
+import requests
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:

@@ -25,15 +25,17 @@ class MainWindow(QMainWindow):
         self.left = 500
         self.top = 500
         self.setWindowIcon(QIcon(resource_path('icon2.png')))  
+        
+        sitemap = None
 
         def add_data(table):
             table.setColumnCount(1)
             table.setHorizontalHeaderLabels(["Urler"])
-            urls = find_urlfragment(fragment.text(), get_sitemap())
-            maks=0
+            if sitemap is None:
+                sitemap = get_sitemap()
+            urls = find_urlfragment(fragment.text(), sitemap)
             for url in urls:
-                if len(url) > maks:
-                    maks=len(url)
+                
                 currentRowCount = table.rowCount()
                 table.setRowCount(currentRowCount+1)
                 table.setItem(currentRowCount, 0, QTableWidgetItem(f"{url}"))

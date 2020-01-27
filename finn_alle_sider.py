@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup as BS
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def get_sitemap() -> BS:
+def get_sitemap_obos() -> BS:
     sitemaps = [
         "https://www.obos.no/sitemaps/sitemap_obos.no.xml",
         "http://www.obos.no/sitemap.xml",
@@ -20,6 +20,18 @@ def get_sitemap() -> BS:
         tekst = requests.get(i, verify=False).text
         sitemap += tekst
     return BS(sitemap, "xml")
+
+def get_sitemap_nye() -> BS:
+    sitemaps = BS(requests.get("https://nye.obos.no/sitemap.xml").text, "lxml")
+    sitemaps = sitemaps.findAll("loc")
+    sitemap = ""
+    for url in sitemap:
+        sitemap += requests.get(url.text, verify=False).text
+    return BS(sitemap,"lxml")
+
+
+
+
 
 
 def find_urlfragment(tag: str, sitemap: BS) -> list:

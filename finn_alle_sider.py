@@ -22,17 +22,18 @@ def get_sitemap_obos() -> BS:
     return BS(sitemap, "xml")
 
 def get_sitemap_nye() -> BS:
-    sitemaps = BS(requests.get("https://nye.obos.no/sitemap.xml").text, "lxml")
+    sitemaps = BS(requests.get("https://nye.obos.no/sitemap.xml", verify=False).text, "lxml")
     sitemaps = sitemaps.findAll("loc")
     sitemap = ""
-    for url in sitemap:
+    for url in sitemaps:
         sitemap += requests.get(url.text, verify=False).text
     return BS(sitemap,"lxml")
 
-
-
-
-
+def get_all_sitemaps() -> BS:
+    nye = get_sitemap_nye()
+    obos = get_sitemap_obos()
+    nye.urlset.insert(-1,obos.urlset)
+    return nye
 
 def find_urlfragment(tag: str, sitemap: BS) -> list:
     locs = sitemap.findAll("loc")

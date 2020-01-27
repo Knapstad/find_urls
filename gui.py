@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
-from finn_alle_sider import find_urlfragment, get_sitemap
+from finn_alle_sider import find_urlfragment, get_sitemap_obos, get_sitemap_nye, get_all_sitemaps
 import os
 import sys
 
@@ -24,15 +24,30 @@ class MainWindow(QMainWindow):
         self.top = 500
         self.setWindowIcon(QIcon(resource_path("icon2.png")))
 
-        self.sitemap = None
+        self.sitemap_obos = None
+        self.sitemap_nye = None
+        self.sitemap_begge = None
 
         def add_data(table):
             table.setColumnCount(1)
             table.setRowCount(0)
             table.setHorizontalHeaderLabels(["Url", "Tittel"])
-            if self.sitemap is None:
-                self.sitemap = get_sitemap()
-            urls = find_urlfragment(fragment.text(), self.sitemap)
+
+            if str(site.currentText())=="obos":
+                if self.sitemap_obos is None:
+                    self.sitemap_obos = get_sitemap_obos()
+                urls = find_urlfragment(fragment.text(), self.sitemap_obos)
+
+            if str(site.currentText())=="nye":
+                if self.sitemap_nye is None:
+                    self.sitemap_nye = get_sitemap_nye()
+                urls = find_urlfragment(fragment.text(), self.sitemap_nye)
+
+            if str(site.currentText())=="begge":
+                if self.sitemap_begge is None:
+                    self.sitemap_begge = get_all_sitemaps()
+                urls = find_urlfragment(fragment.text(), self.sitemap_begge)
+
             for url in urls:
                 currentRowCount = table.rowCount()
                 table.setRowCount(currentRowCount + 1)
@@ -58,14 +73,17 @@ class MainWindow(QMainWindow):
         layout2 = QVBoxLayout()
         layout3 = QVBoxLayout()
         layout4 = QHBoxLayout()
+        layout5 = QHBoxLayout()
 
         layout1.setContentsMargins(0, 0, 0, 0)
         layout2.setContentsMargins(30, 30, 40, 0)
         layout4.setContentsMargins(0, 0, 0, 0)
+        layout5.setContentsMargins(0, 0, 0, 0)
 
         layout1.setSpacing(20)
         layout2.setSpacing(10)
         layout4.setSpacing(2)
+        layout5.setSpacing(0)
 
         layout2.setAlignment(Qt.AlignVCenter)
 
@@ -82,6 +100,14 @@ class MainWindow(QMainWindow):
         layout4.addWidget(fragment_label)
         layout4.addWidget(fragment)
 
+        site_label = QLabel("Hvilken side:")
+        site = QComboBox()
+        site.addItems(["obos", "nye", "begge"])
+        layout5.addWidget(site_label)
+        layout5.addWidget(site)
+
+
+
         hent = QPushButton("Hent urler")
         hent.setMaximumSize(200, 30)
         lagre = QPushButton("Lagre urler")
@@ -93,6 +119,7 @@ class MainWindow(QMainWindow):
         shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
         shortcut.activated.connect(lambda: lagre_data(my_table))
 
+        layout2.addLayout(layout5)
         layout2.addLayout(layout4)
         layout2.addWidget(hent)
         layout2.addWidget(lagre)

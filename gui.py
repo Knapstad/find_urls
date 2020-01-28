@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
 
         def execute_add_data():
             print("starting execute")
+            antall.setText("Henter data...")
             worker = Worker(add_data, my_table)
             self.threadpool.start(worker)
 

@@ -10,33 +10,43 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def get_sitemap_obos() -> BS:
+
     sitemaps = [
         "https://www.obos.no/sitemaps/sitemap_obos.no.xml",
         "http://www.obos.no/sitemap.xml",
         "https://bank.obos.no/sitemap.xml",
     ]
+
     sitemap = ""
     for i in sitemaps:
+        print(f"Getting {i}")
         tekst = requests.get(i, verify=False).text
         sitemap += tekst
     return BS(sitemap, "xml")
 
+
 def get_sitemap_nye() -> BS:
-    sitemaps = BS(requests.get("https://nye.obos.no/sitemap.xml", verify=False).text, "lxml")
+    sitemaps = BS(
+        requests.get("https://nye.obos.no/sitemap.xml", verify=False).text, "lxml"
+    )
     sitemaps = sitemaps.findAll("loc")
     sitemap = ""
     for url in sitemaps:
+        print(f"Getting {url.text}")
         sitemap += requests.get(url.text, verify=False).text
-    return BS(sitemap,"lxml")
+    return BS(sitemap, "lxml")
+
 
 def get_all_sitemaps() -> BS:
     nye = get_sitemap_nye()
     obos = get_sitemap_obos()
-    nye.urlset.insert(-1,obos.urlset)
+    nye.urlset.insert(-1, obos.urlset)
     return nye
+
 
 def find_urlfragment(tag: str, sitemap: BS) -> list:
     locs = sitemap.findAll("loc")
+    print("in urlfragment")
     if tag == "":
         urls = [url.text for url in locs]
     else:

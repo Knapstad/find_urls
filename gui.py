@@ -1,9 +1,15 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QKeySequence
-from finn_alle_sider import find_urlfragment, get_sitemap_obos, get_sitemap_nye, get_all_sitemaps
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from finn_alle_sider import (
+    find_urlfragment,
+    get_sitemap_obos,
+    get_sitemap_nye,
+    get_all_sitemaps,
+)
 import os
 import sys
+
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -14,6 +20,25 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+
+class Worker(QRunnable):
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        print("worker woken")
+
+    @pyqtSlot()
+    def run(self):
+        """
+        Initialise the runner function with passed args, kwargs.
+        """
+        self.fn(*self.args, **self.kwargs)
+        print("worker exexute func")
+
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -27,24 +52,35 @@ class MainWindow(QMainWindow):
         self.sitemap_obos = None
         self.sitemap_nye = None
         self.sitemap_begge = None
+        self.threadpool = QThreadPool()
+
+        def execute_add_data():
+            print("starting execute")
+            worker = Worker(add_data, my_table)
+            self.threadpool.start(worker)
 
         def add_data(table):
+            print("in add data")
             table.setColumnCount(1)
             table.setRowCount(0)
             table.setHorizontalHeaderLabels(["Url", "Tittel"])
 
-            if str(site.currentText())=="obos":
+            if str(site.currentText()) == "obos":
+                print("in obos")
                 if self.sitemap_obos is None:
                     self.sitemap_obos = get_sitemap_obos()
                 urls = find_urlfragment(fragment.text(), self.sitemap_obos)
 
-            if str(site.currentText())=="nye":
+            if str(site.currentText()) == "nye":
+                print("in nye")
                 if self.sitemap_nye is None:
                     self.sitemap_nye = get_sitemap_nye()
                 urls = find_urlfragment(fragment.text(), self.sitemap_nye)
 
-            if str(site.currentText())=="begge":
+            if str(site.currentText()) == "begge":
+                print("in begge")
                 if self.sitemap_begge is None:
+                    print(self.sitemap_begge is None)
                     self.sitemap_begge = get_all_sitemaps()
                 urls = find_urlfragment(fragment.text(), self.sitemap_begge)
 
@@ -89,7 +125,7 @@ class MainWindow(QMainWindow):
 
         fragment_label = QLabel("Urlfragment:")
         fragment = QLineEdit("")
-        fragment.returnPressed.connect(lambda: add_data(my_table))
+        fragment.returnPressed.connect(execute_add_data)
         fragment_width = (
             fragment_label.fontMetrics().boundingRect(fragment_label.text()).width()
         )
@@ -106,13 +142,11 @@ class MainWindow(QMainWindow):
         layout5.addWidget(site_label)
         layout5.addWidget(site)
 
-
-
         hent = QPushButton("Hent urler")
         hent.setMaximumSize(200, 30)
         lagre = QPushButton("Lagre urler")
         lagre.setMaximumSize(200, 30)
-        hent.clicked.connect(lambda: add_data(my_table))
+        hent.clicked.connect(execute_add_data)
         lagre.clicked.connect(lambda: lagre_data(my_table))
         antall = QLabel("")
 

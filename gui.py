@@ -7,6 +7,8 @@ from finn_alle_sider import (
     get_sitemap_nye,
     get_all_sitemaps,
 )
+from tracking import send_tracking
+
 import os
 import sys
 
@@ -47,7 +49,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Finn urler -  OBOS")
         self.left = 500
         self.top = 500
-        self.setWindowIcon(QIcon(resource_path("icon2.png")))
+        self.setWindowIcon(QIcon(resource_path("Profil2.png")))
 
         self.sitemap_obos = None
         self.sitemap_nye = None
@@ -55,7 +57,8 @@ class MainWindow(QMainWindow):
         self.threadpool = QThreadPool()
 
         def execute_add_data():
-            print("starting execute")
+            # print("starting execute")
+            send_tracking("hent_data", site.currentText(), fragment.text())
             antall.setText("Henter data...")
             worker = Worker(add_data, my_table)
             self.threadpool.start(worker)
@@ -91,6 +94,7 @@ class MainWindow(QMainWindow):
                 table.setItem(currentRowCount, 0, QTableWidgetItem(f"{url}"))
             table.setColumnWidth(0, 700)
             antall.setText(f"Antall urler: {len(urls)}")
+            send_tracking("data_hentet", site.currentText(), fragment.text(), len(urls))
 
         def lagre_data(table):
             data = "urls"
@@ -105,6 +109,7 @@ class MainWindow(QMainWindow):
             if filename[0]:
                 with open(filename[0], "w") as f:
                     f.write(data)
+            send_tracking("lagre_data", site.currentText() ,filename[0], len(urls))
 
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
@@ -175,7 +180,12 @@ app = QApplication(list(""))
 window = MainWindow()
 window.resize(1000, 500)
 window.show()
-
-
+try:
+    user = os.environ['USERNAME'] if os.environ['USERNAME']  else "None"
+    host = os.environ['HOSTNAME'] if os.environ['HOSTNAME'] else "Unknown"
+    ident = f"{user} @ {host}"
+    send_tracking("started", ident)
+except:
+    print("no tracking")
 # Start the event loop.
 app.exec_()

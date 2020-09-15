@@ -131,3 +131,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .gitignore
+bank.csv
+bolig.csv
+eiendom.csv
+naringseiendom.csv
+new.json
+test.csv
+test.py
+urls.csv
+.vscode/settings.json

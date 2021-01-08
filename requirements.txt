@@ -6,6 +6,6 @@ idna==2.8
 lxml==4.4.2
 PyQt5==5.14.1
 PyQt5-sip==12.7.0
-requests==2.22.0
+requests==2.25.1
 soupsieve==2.1
 urllib3==1.25.8

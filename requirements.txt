@@ -1,7 +1,7 @@
 beautifulsoup4==4.9.3
 bs4==0.0.1
 certifi==2019.11.28
-chardet==3.0.4
+chardet==4.0.0
 idna==3.1
 lxml==4.6.2
 PyQt5==5.14.1
